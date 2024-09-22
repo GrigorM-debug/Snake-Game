@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace SimpleSnake.GameObjects
 {
@@ -42,54 +39,54 @@ namespace SimpleSnake.GameObjects
         {
             _food[0] = new FoodHash(_wall);
             _food[1] = new FoodDollar(_wall);
-            _food[2] = new FoodDollar(_wall);
+            _food[2] = new FoodAsterisk(_wall);
         }
 
-        private void GetNextPoint(Point direction, Point snakeHead)
+        private Point GetNextPoint(Point direction, Point snakeHead)
         {
             _nextLeftX = snakeHead.LeftX + direction.LeftX;
             _nextTopY = snakeHead.TopY + direction.TopY;
+
+            return new Point(_nextLeftX, _nextTopY);
         }
 
-        public bool IsMoving(Point direction) 
-        { 
+        public bool IsMoving(Point direction)
+        {
             Point currentSnakeHead = _snakeElements.Last();
 
-            GetNextPoint(direction, currentSnakeHead);
+            Point nextPosition = GetNextPoint(direction, currentSnakeHead);
 
-            bool isPointOfSnake = _snakeElements.Any(x=>x.LeftX == _nextLeftX || x.TopY == _nextTopY);
-
-            if (isPointOfSnake)
+            // Check for collision with wall
+            if (_wall.IsPointOfWall(nextPosition))
             {
-                return false;
+                return false;  // Game over
             }
 
-            Point snakeNewHead = new Point(_nextLeftX, _nextTopY);
-
-            if (_wall.IsPointOfWall(snakeNewHead))
+            // Check for collision with itself (snake's body)
+            if (this._snakeElements.Any(s => s.IsAtSamePoint(nextPosition)))
             {
-                return false;
+                return false;  // Game over
             }
 
-            _snakeElements.Enqueue(snakeNewHead);
-            snakeNewHead.Draw(_snakeSymbol);
+            // If no collision, snake moves forward
+            _snakeElements.Enqueue(nextPosition);  // Move snake forward by adding new head
 
-            if (_food[_foodIndex].IsFoodPoint(currentSnakeHead))
-            {
-                Eat(direction, currentSnakeHead);
-            }
+            Point tail = _snakeElements.Dequeue();  // Remove tail to simulate movement
 
-            Point snakeTail = _snakeElements.Dequeue();
-            snakeTail.Draw(' ');
+            // Draw new snake head
+            nextPosition.Draw(_snakeSymbol);
+
+            // Clear the old tail position
+            tail.Draw(' ');
 
             return true;
         }
 
         private void Eat(Point direction, Point currentSnakeHead)
         {
-            int lenght = _food[_foodIndex].FoodPoints;
+            int length = _food[_foodIndex].FoodPoints;
 
-            for (int i = 0; i < lenght; i++)
+            for (int i = 0; i < length; i++)
             {
                 _snakeElements.Enqueue(new Point(_nextLeftX, _nextTopY));
                 GetNextPoint(direction, currentSnakeHead);
@@ -98,5 +95,7 @@ namespace SimpleSnake.GameObjects
             _foodIndex = RandomFoodNumber;
             _food[_foodIndex].SetRandomPosition(_snakeElements);
         }
+
+
     }
 }

@@ -32,5 +32,11 @@ namespace SimpleSnake.GameObjects
             Console.SetCursorPosition(leftX, topY);
             Console.Write(symbol);
         }
+
+        public bool IsAtSamePoint(Point otherPoint)
+        {
+            return this.LeftX == otherPoint.LeftX && this.TopY == otherPoint.TopY;
+        }
+
     }
 }

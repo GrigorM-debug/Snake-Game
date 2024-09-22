@@ -42,7 +42,8 @@ namespace SimpleSnake.GameObjects
 
         public bool IsPointOfWall(Point snake)
         {
-            return snake.TopY == 0 || snake.LeftX == 0 || snake.LeftX == LeftX || snake.TopY == TopY;
+            return snake.TopY == 0 || snake.LeftX == 0 || snake.LeftX == LeftX - 1 || snake.TopY == TopY - 1;
+
         }
     }
 }

@@ -42,6 +42,7 @@ namespace SimpleSnake.Core
                 if (!isMoving)
                 {
                     AskUserToRestard();
+                    break;
                 }
 
                 _sleepTime -= 0.01;
@@ -102,14 +103,24 @@ namespace SimpleSnake.Core
             Console.SetCursorPosition(leftX, topY);
             Console.WriteLine("Would you like to continue? y/n");
 
-            string input = Console.ReadLine();
+            //string input = Console.ReadLine()?.Trim().ToLower();
 
-            if(input == "y")
+            //if (input == "y")
+            //{
+            //    Console.Clear();
+            //    StartUp.Main();
+            //}
+            //else if(input == "n") 
+            //{
+            //    StopGame();
+            //}
+            ConsoleKeyInfo key = Console.ReadKey(true);
+            if (key.Key == ConsoleKey.Y)
             {
                 Console.Clear();
                 StartUp.Main();
             }
-            else if(input == "n") 
+            else if (key.Key == ConsoleKey.N)
             {
                 StopGame();
             }
